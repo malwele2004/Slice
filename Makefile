@@ -25,6 +25,7 @@ install: prepare release
 	sudo ldconfig
 
 prepare:
+	-mkdir $(BINDIR) $(BUILDDIR) || true
 	-mkdir $(HEADER_INSTALL_PATH) || true
 
 release: clean all
