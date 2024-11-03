@@ -1,2 +1,2 @@
 # Slice
-Slice like data structure in c [akin to Golang], as a way to improve the c productivity
+Slice data structure for C (like Golang's), as a way to improve your C productivity
