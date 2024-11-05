@@ -1,5 +1,8 @@
-LIB_INSTALL_PATH := /usr/local/lib
-HEADER_INSTALL_PATH := /usr/local/include/josiah/slice
+PROJECTNAME := slice
+
+LDCONFFILE := /etc/ld.so.conf.d/$(PROJECTNAME).conf
+LIB_INSTALL_PATH := /usr/local/lib/josiah/$(PROJECTNAME)
+HEADER_INSTALL_PATH := /usr/local/include/josiah/$(PROJECTNAME)
 
 INCLUDEDIR := include
 DEFDIR := def
@@ -8,7 +11,7 @@ SRCDIR := src
 BINDIR := bin
 BUILDDIR := build
 
-OUT := libslice.so
+OUT := lib$(PROJECTNAME).so
 SONAME := $(OUT).0
 TARGET := $(OUT).0.0.0
 
@@ -21,12 +24,18 @@ RELEASE_FLAGS := -Wl,--soname=$(SONAME) -shared
 install: prepare release
 	sudo cp $(BUILDDIR)/$(TARGET) $(LIB_INSTALL_PATH)/
 	sudo sh -c 'ln -s $(LIB_INSTALL_PATH)/$(TARGET) $(LIB_INSTALL_PATH)/$(OUT) || true'
+	sudo sh -c 'ln -s $(LIB_INSTALL_PATH)/$(TARGET) $(LIB_INSTALL_PATH)/$(SONAME) || true'
 	sudo cp -r $(INCLUDEDIR) $(DEFDIR) $(HEADER_INSTALL_PATH)/
+	sudo chmod +755 $(LIB_INSTALL_PATH)/$(TARGET)
+	sudo chmod +755 $(LIB_INSTALL_PATH)/$(SONAME)
+	sudo chmod +755 $(LIB_INSTALL_PATH)/$(OUT)
+	sudo chmod +644 $(LDCONFFILE)
 	sudo ldconfig
 
 prepare:
-	-mkdir $(BINDIR) $(BUILDDIR) || true
-	-mkdir $(HEADER_INSTALL_PATH) || true
+	sudo sh -c 'mkdir $(BINDIR) $(BUILDDIR) || true'
+	sudo sh -c 'echo $(LIB_INSTALL_PATH) > $(LDCONFFILE)'
+	sudo sh -c 'mkdir -p $(HEADER_INSTALL_PATH) $(LIB_INSTALL_PATH) || true'
 
 release: clean all
 	gcc $(RELEASE_FLAGS) -o $(BUILDDIR)/$(TARGET) $(BINDIR)/*
