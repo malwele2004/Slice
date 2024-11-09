@@ -26,10 +26,6 @@ install: prepare release
 	sudo sh -c 'ln -s $(LIB_INSTALL_PATH)/$(TARGET) $(LIB_INSTALL_PATH)/$(OUT) || true'
 	sudo sh -c 'ln -s $(LIB_INSTALL_PATH)/$(TARGET) $(LIB_INSTALL_PATH)/$(SONAME) || true'
 	sudo cp -r $(INCLUDEDIR) $(DEFDIR) $(HEADER_INSTALL_PATH)/
-	sudo chmod +755 $(LIB_INSTALL_PATH)/$(TARGET)
-	sudo chmod +755 $(LIB_INSTALL_PATH)/$(SONAME)
-	sudo chmod +755 $(LIB_INSTALL_PATH)/$(OUT)
-	sudo chmod +644 $(LDCONFFILE)
 	sudo ldconfig
 
 prepare:
@@ -38,7 +34,7 @@ prepare:
 	sudo sh -c 'mkdir -p $(HEADER_INSTALL_PATH) $(LIB_INSTALL_PATH) || true'
 
 release: clean all
-	gcc $(RELEASE_FLAGS) -o $(BUILDDIR)/$(TARGET) $(BINDIR)/*
+	gcc $(RELEASE_FLAGS) $(BINDIR)/* -o $(BUILDDIR)/$(TARGET)
 
 all:
 	for item in $(LIST); do \
